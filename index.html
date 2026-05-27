@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta property="og:title" content="دوره آموزشی انجیل متی">
+<meta property="og:description" content="یک ساعت با کلام خدا – انجیل متی">
+<meta property="og:type" content="website">
+<title>دوره آموزشی انجیل متی | داریوش یوخانه</title>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #c9a84c;
+    --gold-light: #f0d078;
+    --gold-dim: #7a6230;
+    --bg-deep: #0a0a14;
+    --bg-card: #12121e;
+    --bg-section: #0f0f1a;
+    --text: #f0ead6;
+    --text-dim: #a09070;
+    --accent: #4a90d9;
+    --accent2: #8b5cf6;
+    --border: rgba(201,168,76,0.2);
+    --radius: 18px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Vazirmatn', sans-serif;
+    background: var(--bg-deep);
+    color: var(--text);
+    direction: rtl;
+    text-align: right;
+    overflow-x: hidden;
+    line-height: 1.8;
+  }
+
+  /* ── MUSIC PLAYER ── */
+  #music-bar {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    z-index: 999;
+    background: rgba(10,10,20,0.97);
+    border-top: 1px solid var(--border);
+    padding: 10px 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    backdrop-filter: blur(10px);
+  }
+  #music-bar .note { font-size: 22px; }
+  #music-bar .label { flex: 1; font-size: 13px; color: var(--gold); }
+  #music-bar .label small { display: block; color: var(--text-dim); font-size: 11px; }
+  #play-btn {
+    background: linear-gradient(135deg, var(--gold), var(--gold-light));
+    border: none; color: #000; border-radius: 50%;
+    width: 42px; height: 42px; font-size: 18px;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 0 16px rgba(201,168,76,0.5);
+    transition: transform 0.2s;
+    flex-shrink: 0;
+  }
+  #play-btn:active { transform: scale(0.92); }
+  .wave-vis {
+    display: flex; align-items: center; gap: 3px; height: 24px;
+  }
+  .wave-vis span {
+    display: block; width: 3px; background: var(--gold);
+    border-radius: 2px; animation: wave 1.2s ease-in-out infinite;
+    opacity: 0.3;
+  }
+  .wave-vis span:nth-child(1){ height: 6px; animation-delay:0s; }
+  .wave-vis span:nth-child(2){ height: 14px; animation-delay:0.15s; }
+  .wave-vis span:nth-child(3){ height: 20px; animation-delay:0.3s; }
+  .wave-vis span:nth-child(4){ height: 14px; animation-delay:0.45s; }
+  .wave-vis span:nth-child(5){ height: 6px; animation-delay:0.6s; }
+  .wave-vis.playing span { opacity: 1; }
+  @keyframes wave {
+    0%,100%{ transform: scaleY(1); }
+    50%{ transform: scaleY(1.8); }
+  }
+
+  /* ── HERO ── */
+  #hero {
+    min-height: 100vh;
+    background: radial-gradient(ellipse at 50% 30%, #1a1020 0%, #0a0a14 70%);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 40px 20px 100px;
+    position: relative; overflow: hidden;
+    text-align: center;
+  }
+  #hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c9a84c' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    pointer-events: none;
+  }
+  .stars {
+    position: absolute; inset: 0; pointer-events: none; overflow: hidden;
+  }
+  .star {
+    position: absolute; width: 2px; height: 2px;
+    background: var(--gold); border-radius: 50%;
+    animation: twinkle var(--d,3s) ease-in-out infinite;
+    opacity: 0;
+  }
+  @keyframes twinkle {
+    0%,100%{opacity:0;} 50%{opacity:var(--op,0.8);}
+  }
+  .cross-icon {
+    font-size: 64px; margin-bottom: 24px;
+    animation: float 4s ease-in-out infinite;
+    filter: drop-shadow(0 0 20px rgba(201,168,76,0.6));
+  }
+  @keyframes float {
+    0%,100%{ transform: translateY(0); }
+    50%{ transform: translateY(-12px); }
+  }
+  #hero h1 {
+    font-size: clamp(28px, 7vw, 52px);
+    font-weight: 900;
+    background: linear-gradient(135deg, var(--gold-light), var(--gold), #e8c56e);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    line-height: 1.3; margin-bottom: 16px;
+  }
+  #hero .subtitle {
+    font-size: clamp(14px, 3.5vw, 20px);
+    color: var(--text-dim); margin-bottom: 32px;
+    max-width: 380px;
+  }
+  .hero-badges {
+    display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 36px;
+  }
+  .badge {
+    background: rgba(201,168,76,0.12);
+    border: 1px solid var(--border);
+    border-radius: 100px; padding: 6px 16px;
+    font-size: 13px; color: var(--gold);
+  }
+  .start-btn {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--gold), var(--gold-light));
+    color: #000; font-family: 'Vazirmatn', sans-serif;
+    font-size: 17px; font-weight: 700;
+    padding: 16px 40px; border-radius: 100px;
+    text-decoration: none; border: none; cursor: pointer;
+    box-shadow: 0 8px 30px rgba(201,168,76,0.4);
+    transition: transform 0.2s, box-shadow 0.2s;
+    animation: pulse-glow 2.5s ease-in-out infinite;
+  }
+  .start-btn:active { transform: scale(0.96); }
+  @keyframes pulse-glow {
+    0%,100%{ box-shadow: 0 8px 30px rgba(201,168,76,0.4); }
+    50%{ box-shadow: 0 8px 50px rgba(201,168,76,0.7); }
+  }
+
+  /* ── PROGRESS BAR ── */
+  #progress-bar-wrap {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 998;
+    height: 3px; background: rgba(255,255,255,0.08);
+  }
+  #progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, var(--gold), var(--gold-light)); transition: width 0.3s; }
+
+  /* ── NAV ── */
+  #nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(10,10,20,0.95);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 20px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  #nav .nav-title { font-size: 15px; color: var(--gold); font-weight: 700; }
+  .menu-btn {
+    background: none; border: 1px solid var(--border);
+    color: var(--gold); border-radius: 8px;
+    padding: 6px 14px; font-size: 13px;
+    font-family: 'Vazirmatn', sans-serif; cursor: pointer;
+  }
+
+  /* ── SIDEBAR / LESSON LIST ── */
+  #sidebar {
+    position: fixed; top: 0; right: 0; bottom: 0;
+    width: min(300px, 85vw);
+    background: var(--bg-card);
+    border-left: 1px solid var(--border);
+    z-index: 500; overflow-y: auto;
+    transform: translateX(100%);
+    transition: transform 0.35s cubic-bezier(.4,0,.2,1);
+    padding: 20px 0 100px;
+  }
+  #sidebar.open { transform: translateX(0); }
+  #sidebar-overlay {
+    position: fixed; inset: 0; z-index: 499;
+    background: rgba(0,0,0,0.6); display: none;
+  }
+  #sidebar-overlay.open { display: block; }
+  .sidebar-header {
+    padding: 16px 20px 12px;
+    border-bottom: 1px solid var(--border);
+    font-size: 16px; font-weight: 700; color: var(--gold);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .close-btn { background: none; border: none; color: var(--text-dim); font-size: 22px; cursor: pointer; }
+  .sidebar-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 20px; cursor: pointer;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    transition: background 0.2s;
+  }
+  .sidebar-item:active { background: rgba(201,168,76,0.1); }
+  .sidebar-item .s-num {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: rgba(201,168,76,0.12); border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; color: var(--gold); flex-shrink: 0;
+  }
+  .sidebar-item.done .s-num { background: var(--gold); color: #000; }
+  .sidebar-item .s-title { font-size: 14px; line-height: 1.4; }
+  .sidebar-item .s-time { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
+
+  /* ── SECTIONS ── */
+  .section {
+    padding: 50px 20px 40px;
+    max-width: 680px; margin: 0 auto;
+    opacity: 0; transform: translateY(30px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .section.visible { opacity: 1; transform: translateY(0); }
+
+  .lesson-num {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(201,168,76,0.1); border: 1px solid var(--border);
+    border-radius: 100px; padding: 4px 14px 4px 10px;
+    font-size: 12px; color: var(--gold); margin-bottom: 16px;
+  }
+  .lesson-num span { font-size: 16px; }
+
+  h2 {
+    font-size: clamp(20px, 5vw, 30px);
+    font-weight: 900; line-height: 1.4;
+    color: var(--gold-light); margin-bottom: 20px;
+  }
+
+  .verse-block {
+    background: rgba(201,168,76,0.06);
+    border-right: 3px solid var(--gold);
+    border-radius: 12px;
+    padding: 16px 18px;
+    margin: 20px 0;
+    font-size: 15px; color: var(--gold-light);
+    line-height: 2; font-style: italic;
+  }
+  .verse-ref { font-size: 12px; color: var(--gold-dim); font-style: normal; margin-top: 8px; }
+
+  p { font-size: 15px; color: var(--text); margin-bottom: 16px; line-height: 1.9; }
+
+  .highlight-box {
+    background: linear-gradient(135deg, rgba(74,144,217,0.12), rgba(139,92,246,0.08));
+    border: 1px solid rgba(74,144,217,0.25);
+    border-radius: 14px; padding: 18px 20px; margin: 20px 0;
+  }
+  .highlight-box .hb-icon { font-size: 24px; margin-bottom: 10px; }
+  .highlight-box h4 { font-size: 15px; font-weight: 700; color: #7dd3fc; margin-bottom: 8px; }
+  .highlight-box p { font-size: 14px; color: #c4e0f0; margin: 0; }
+
+  .point-list { list-style: none; margin: 16px 0; }
+  .point-list li {
+    display: flex; gap: 12px; padding: 10px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    font-size: 14px; line-height: 1.7;
+  }
+  .point-list li:last-child { border: none; }
+  .point-list .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--gold); flex-shrink: 0; margin-top: 8px;
+  }
+
+  .reflection-card {
+    background: rgba(139,92,246,0.1);
+    border: 1px solid rgba(139,92,246,0.3);
+    border-radius: 14px; padding: 18px 20px; margin: 24px 0;
+  }
+  .reflection-card h4 { font-size: 14px; color: #c4b5fd; margin-bottom: 10px; }
+  .reflection-card p { font-size: 14px; color: #ddd6fe; margin: 0; }
+
+  .divider {
+    border: none; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+    margin: 40px 0;
+  }
+
+  /* ── TIMER ── */
+  .lesson-timer {
+    display: flex; align-items: center; gap: 8px;
+    color: var(--text-dim); font-size: 13px; margin-bottom: 20px;
+  }
+  .lesson-timer span { color: var(--gold); font-weight: 600; }
+
+  /* ── DONE BUTTON ── */
+  .done-btn {
+    display: block; width: 100%;
+    background: rgba(201,168,76,0.1);
+    border: 1px solid var(--border);
+    color: var(--gold); border-radius: 12px;
+    padding: 14px; font-family: 'Vazirmatn', sans-serif;
+    font-size: 15px; font-weight: 600; cursor: pointer;
+    transition: all 0.2s; margin-top: 24px;
+  }
+  .done-btn:active, .done-btn.completed {
+    background: linear-gradient(135deg, rgba(201,168,76,0.3), rgba(240,208,120,0.15));
+    border-color: var(--gold);
+  }
+  .done-btn.completed::before { content: '✓ '; }
+
+  /* ── FINAL PAGE ── */
+  #final {
+    min-height: 80vh;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 60px 20px 120px; text-align: center;
+    background: radial-gradient(ellipse at 50% 60%, #1a1020 0%, var(--bg-deep) 70%);
+  }
+  #final .trophy { font-size: 72px; animation: float 3s ease-in-out infinite; margin-bottom: 24px; }
+  #final h2 {
+    font-size: clamp(24px, 6vw, 40px);
+    color: var(--gold-light); text-align: center;
+  }
+  #final p { text-align: center; max-width: 380px; }
+  .certificate {
+    background: rgba(201,168,76,0.08);
+    border: 2px solid var(--gold);
+    border-radius: 20px; padding: 30px 24px;
+    margin: 30px auto; max-width: 380px;
+    position: relative; overflow: hidden;
+  }
+  .certificate::before {
+    content: '✝';
+    position: absolute; top: -20px; right: -20px;
+    font-size: 120px; color: rgba(201,168,76,0.05);
+    pointer-events: none;
+  }
+  .certificate h3 { font-size: 18px; color: var(--gold); margin-bottom: 8px; }
+  .certificate p { font-size: 13px; color: var(--text-dim); margin: 4px 0; }
+  .certificate .maker {
+    margin-top: 20px; padding-top: 16px;
+    border-top: 1px solid var(--border);
+    font-size: 14px; color: var(--gold);
+    font-weight: 700;
+  }
+  .certificate .community { font-size: 12px; color: var(--text-dim); }
+
+  /* ── SCROLL NAV ── */
+  .nav-btns {
+    display: flex; gap: 12px; margin-top: 30px; justify-content: center; flex-wrap: wrap;
+  }
+  .nav-btn {
+    background: rgba(255,255,255,0.06); border: 1px solid var(--border);
+    color: var(--text); border-radius: 10px; padding: 10px 20px;
+    font-family: 'Vazirmatn', sans-serif; font-size: 14px; cursor: pointer;
+    transition: background 0.2s;
+  }
+  .nav-btn:active { background: rgba(201,168,76,0.15); }
+  .nav-btn.primary {
+    background: linear-gradient(135deg, var(--gold), var(--gold-light));
+    color: #000; font-weight: 700; border: none;
+  }
+
+  /* ── CHAPTER HEADER ── */
+  .chapter-banner {
+    background: linear-gradient(135deg, rgba(201,168,76,0.15), rgba(201,168,76,0.05));
+    border: 1px solid var(--border); border-radius: 16px;
+    padding: 24px 20px; margin-bottom: 30px; text-align: center;
+  }
+  .chapter-banner .ch-icon { font-size: 36px; margin-bottom: 10px; }
+  .chapter-banner h3 { font-size: 18px; color: var(--gold); margin-bottom: 6px; }
+  .chapter-banner p { font-size: 13px; color: var(--text-dim); margin: 0; }
+
+  /* ── MEMORY VERSE ── */
+  .memory-verse {
+    background: linear-gradient(135deg, rgba(201,168,76,0.18), rgba(240,208,120,0.08));
+    border-radius: 16px; padding: 22px 20px; margin: 24px 0; text-align: center;
+  }
+  .memory-verse .mv-label { font-size: 11px; letter-spacing: 2px; color: var(--gold-dim); margin-bottom: 10px; text-transform: uppercase; }
+  .memory-verse .mv-text { font-size: 16px; color: var(--gold-light); font-weight: 600; line-height: 1.8; }
+  .memory-verse .mv-ref { font-size: 12px; color: var(--text-dim); margin-top: 8px; }
+
+  /* animations */
+  @keyframes fadeUp {
+    from { opacity:0; transform:translateY(20px); }
+    to { opacity:1; transform:translateY(0); }
+  }
+</style>
+</head>
+<body>
+
+<!-- Progress Bar -->
+<div id="progress-bar-wrap"><div id="progress-bar"></div></div>
+
+<!-- Sidebar -->
+<div id="sidebar-overlay" onclick="closeSidebar()"></div>
+<div id="sidebar">
+  <div class="sidebar-header">
+    <span>📖 فهرست دروس</span>
+    <button class="close-btn" onclick="closeSidebar()">✕</button>
+  </div>
+  <div id="lesson-list"></div>
+</div>
+
+<!-- Sticky Nav -->
+<div id="nav">
+  <div class="nav-title">✝ انجیل متی</div>
+  <button class="menu-btn" onclick="openSidebar()">📖 دروس</button>
+</div>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="stars" id="stars"></div>
+  <div class="cross-icon">✝</div>
+  <h1>دوره آموزشی<br>انجیل متی</h1>
+  <p class="subtitle">یک ساعت غوطه‌وری در کلام خدا<br>از فصل اول تا پایان</p>
+  <div class="hero-badges">
+    <span class="badge">⏱ ۶۰ دقیقه</span>
+    <span class="badge">📖 ۶ درس</span>
+    <span class="badge">🌟 سطح مقدماتی</span>
+    <span class="badge">🇮🇷 فارسی</span>
+  </div>
+  <button class="start-btn" onclick="document.getElementById('lesson1').scrollIntoView({behavior:'smooth'})">شروع دوره ←</button>
+</section>
+
+<!-- ═══════════════════════════════ LESSON 1 ═══════════════════════════════ -->
+<section class="section" id="lesson1" data-lesson="1" data-title="نسب‌نامه و تولد عیسی" data-time="۱۰ دقیقه">
+  <div class="lesson-num"><span>📜</span> درس اول</div>
+  <div class="lesson-timer">⏱ زمان تقریبی: <span>۱۰ دقیقه</span></div>
+  <h2>نسب‌نامه و تولد عیسی مسیح</h2>
+
+  <div class="chapter-banner">
+    <div class="ch-icon">👑</div>
+    <h3>فصل‌های ۱–۲</h3>
+    <p>آغاز بزرگ‌ترین داستان تاریخ بشر</p>
+  </div>
+
+  <div class="verse-block">
+    «کتاب تبار عیسی مسیح، پسر داود، پسر ابراهیم.»
+    <div class="verse-ref">متی ۱:۱</div>
+  </div>
+
+  <p>انجیل متی با اعلامی قدرتمند آغاز می‌شود: عیسی هم از نسل ابراهیم است و هم از نسل داود. این نسب‌نامه برای یهودیان اهمیتی حیاتی داشت؛ زیرا ثابت می‌کرد که عیسی همان مسیح موعودی است که انبیا درباره‌اش نبوت کرده بودند.</p>
+
+  <div class="highlight-box">
+    <div class="hb-icon">💡</div>
+    <h4>نکته کلیدی: چرا متی از ابراهیم شروع می‌کند؟</h4>
+    <p>متی انجیل خود را برای یهودیان می‌نوشت. ابراهیم جد بزرگ قوم یهود بود و خدا به او وعده داده بود که «در نسل تو همه قبایل زمین برکت خواهند یافت» (پیدایش ۱۲:۳). عیسی تحقق این وعده است.</p>
+  </div>
+
+  <p>سپس متی داستان تولد عیسی را از دیدگاه یوسف روایت می‌کند. مریم باردار شد از روح‌القدس. یوسف که مردی عادل بود، تصمیم گرفت آرام جدا شود، اما فرشته‌ای در خواب به او گفت: «از ترس پذیرفتن مریم به عنوان زنت باز مایست.»</p>
+
+  <div class="verse-block">
+    «ببین، باکره‌ای آبستن می‌شود و پسری می‌زاید، و نامش را عمانوئیل خواهند نامید» که ترجمه‌اش «خدا با ماست» می‌باشد.
+    <div class="verse-ref">متی ۱:۲۳</div>
+  </div>
+
+  <p>سپس ستاره‌شناسان از مشرق زمین می‌آیند. هیرودیس ترسید. ستاره آنها را به بیت‌لحم راهنمایی کرد. آنها هدایایی آوردند: طلا، کندر و مر — نمادهایی از پادشاهی، الوهیت و مرگ.</p>
+
+  <ul class="point-list">
+    <li><div class="dot"></div><div>نسب‌نامه عیسی اثبات می‌کند او مسیح موعود است</div></li>
+    <li><div class="dot"></div><div>تولد از باکره تحقق نبوت اشعیا بود</div></li>
+    <li><div class="dot"></div><div>هدایای مجوسیان هویت عیسی را آشکار می‌کنند</div></li>
+    <li><div class="dot"></div><div>فرار به مصر در تاریکی سپری شد تا جان عیسی حفظ شود</div></li>
+  </ul>
+
+  <div class="memory-verse">
+    <div class="mv-label">آیه حفظ‌کردنی</div>
+    <div class="mv-text">«و نامش را عمانوئیل خواهند نامید که ترجمه‌اش خدا با ماست می‌باشد.»</div>
+    <div class="mv-ref">متی ۱:۲۳</div>
+  </div>
+
+  <div class="reflection-card">
+    <h4>🤔 تأمل و اندیشه</h4>
+    <p>خدا در قالب انسان به این جهان آمد. «خدا با ماست» — این نه فقط یک نام، بلکه یک واقعیت ابدی است. آیا امروز این حضور را در زندگی خود احساس می‌کنی؟</p>
+  </div>
+
+  <div class="nav-btns">
+    <button class="done-btn" onclick="markDone(this, 1)">✓ درس را تکمیل کردم</button>
+    <button class="nav-btn primary" onclick="scrollToLesson(2)">درس بعدی ←</button>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ═══════════════════════════════ LESSON 2 ═══════════════════════════════ -->
+<section class="section" id="lesson2" data-lesson="2" data-title="تعمید و وسوسه" data-time="۱۰ دقیقه">
+  <div class="lesson-num"><span>💧</span> درس دوم</div>
+  <div class="lesson-timer">⏱ زمان تقریبی: <span>۱۰ دقیقه</span></div>
+  <h2>تعمید عیسی و آزمایش در بیابان</h2>
+
+  <div class="chapter-banner">
+    <div class="ch-icon">🕊️</div>
+    <h3>فصل‌های ۳–۴</h3>
+    <p>آغاز خدمت علنی عیسی</p>
+  </div>
+
+  <div class="verse-block">
+    «این است پسر محبوبم که از او خشنودم.»
+    <div class="verse-ref">متی ۳:۱۷</div>
+  </div>
+
+  <p>یحیی تعمید‌دهنده در بیابان یهودیه ظاهر می‌شود و موعظه می‌کند: «توبه کنید زیرا ملکوت آسمان نزدیک شده است.» او همان «صدای ندادهنده در بیابان» است که اشعیا از او نبوت کرده بود.</p>
+
+  <p>عیسی از جلیل به اردن می‌آید تا از یحیی تعمید بگیرد. یحیی اعتراض می‌کند: «من محتاجم که از تو تعمید بگیرم.» اما عیسی می‌فرماید: «بگذار باشد، زیرا ما را سزاست تمام عدالت را به انجام رسانیم.»</p>
+
+  <div class="highlight-box">
+    <div class="hb-icon">🕊️</div>
+    <h4>لحظه تثلیث در اردن</h4>
+    <p>در لحظه تعمید هر سه اقنوم تثلیث ظاهر شدند: پسر در آب، روح‌القدس به شکل کبوتر فرود آمد، و صدای پدر از آسمان شنیده شد. این یک تجلی بی‌نظیر در تاریخ بود.</p>
+  </div>
+
+  <p>بلافاصله پس از تعمید، روح خدا عیسی را به بیابان برد تا از ابلیس آزمایش شود. چهل روز و چهل شب روزه گرفت. سه آزمایش بزرگ پیش آمد:</p>
+
+  <ul class="point-list">
+    <li><div class="dot"></div><div><strong style="color:var(--gold)">آزمایش اول:</strong> «اگر پسر خدا هستی، بگو این سنگ‌ها نان شوند.» عیسی پاسخ داد: «انسان تنها با نان زندگی نمی‌کند.»</div></li>
+    <li><div class="dot"></div><div><strong style="color:var(--gold)">آزمایش دوم:</strong> خود را از بلندترین جای معبد بینداز. عیسی گفت: «خداوند خدایت را نیازمایی.»</div></li>
+    <li><div class="dot"></div><div><strong style="color:var(--gold)">آزمایش سوم:</strong> «به من سجده کن تا همه ممالک جهان را به تو بدهم.» عیسی فرمود: «شیطان دور شو! فقط خداوند خدایت را پرستش کن.»</div></li>
+  </ul>
+
+  <div class="verse-block">
+    «انسان تنها با نان زندگی نمی‌کند، بلکه با هر کلامی که از دهان خدا بیرون می‌آید.»
+    <div class="verse-ref">متی ۴:۴</div>
+  </div>
+
+  <p>پس از این پیروزی، عیسی موعظه خود را آغاز کرد: «توبه کنید زیرا ملکوت آسمان نزدیک شده است.» سپس چهار شاگرد اول را فرا خواند: پطرس، آندریاس، یعقوب و یوحنا.</p>
+
+  <div class="memory-verse">
+    <div class="mv-label">آیه حفظ‌کردنی</div>
+    <div class="mv-text">«انسان تنها با نان زندگی نمی‌کند، بلکه با هر کلامی که از دهان خدا بیرون می‌آید.»</div>
+    <div class="mv-ref">متی ۴:۴</div>
+  </div>
+
+  <div class="reflection-card">
+    <h4>🤔 تأمل و اندیشه</h4>
+    <p>عیسی با کلام خدا هر آزمایشی را شکست داد. او با «نوشته شده است» ابلیس را محکوم کرد. چگونه می‌توانیم از کلام خدا به عنوان سپر و شمشیر در برابر وسوسه‌ها استفاده کنیم؟</p>
+  </div>
+
+  <div class="nav-btns">
+    <button class="done-btn" onclick="markDone(this, 2)">✓ درس را تکمیل کردم</button>
+    <button class="nav-btn" onclick="scrollToLesson(1)">→ درس قبل</button>
+    <button class="nav-btn primary" onclick="scrollToLesson(3)">درس بعدی ←</button>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ═══════════════════════════════ LESSON 3 ═══════════════════════════════ -->
+<section class="section" id="lesson3" data-lesson="3" data-title="موعظه بر فراز کوه" data-time="۱۵ دقیقه">
+  <div class="lesson-num"><span>⛰️</span> درس سوم</div>
+  <div class="lesson-timer">⏱ زمان تقریبی: <span>۱۵ دقیقه</span></div>
+  <h2>موعظه بر فراز کوه – قانون ملکوت</h2>
+
+  <div class="chapter-banner">
+    <div class="ch-icon">⛰️</div>
+    <h3>فصل‌های ۵–۷</h3>
+    <p>بزرگ‌ترین موعظه تاریخ بشریت</p>
+  </div>
+
+  <div class="verse-block">
+    «خوشا به حال فقیران در روح، زیرا ملکوت آسمان از آنِ ایشان است.»
+    <div class="verse-ref">متی ۵:۳</div>
+  </div>
+
+  <p>موعظه بر فراز کوه بنیادی‌ترین تعالیم عیسی را در بر می‌گیرد. این موعظه با «خوشا به حال‌ها» (Beatitudes) آغاز می‌شود — هشت اعلام برکت که دنیا را شگفت‌زده کرد.</p>
+
+  <ul class="point-list">
+    <li><div class="dot"></div><div>خوشا به حال <strong style="color:var(--gold)">فقیران در روح</strong> — ملکوت آسمان از آنِ ایشان است</div></li>
+    <li><div class="dot"></div><div>خوشا به حال <strong style="color:var(--gold)">ماتم‌زدگان</strong> — تسلی خواهند یافت</div></li>
+    <li><div class="dot"></div><div>خوشا به حال <strong style="color:var(--gold)">حلیمان</strong> — زمین را به میراث خواهند برد</div></li>
+    <li><div class="dot"></div><div>خوشا به حال <strong style="color:var(--gold)">گرسنگان و تشنگان عدالت</strong> — سیر خواهند شد</div></li>
+    <li><div class="dot"></div><div>خوشا به حال <strong style="color:var(--gold)">رحیمان</strong> — رحمت خواهند یافت</div></li>
+    <li><div class="dot"></div><div>خوشا به حال <strong style="color:var(--gold)">پاکدلان</strong> — خدا را خواهند دید</div></li>
+    <li><div class="dot"></div><div>خوشا به حال <strong style="color:var(--gold)">صلح‌آوران</strong> — پسران خدا خوانده خواهند شد</div></li>
+    <li><div class="dot"></div><div>خوشا به حال <strong style="color:var(--gold)">آزاردیدگان به خاطر عدالت</strong> — ملکوت آسمان از آنِ ایشان است</div></li>
+  </ul>
+
+  <div class="highlight-box">
+    <div class="hb-icon">🧂</div>
+    <h4>نمک زمین و نور جهان</h4>
+    <p>عیسی به پیروانش گفت: «شما نمک زمین هستید» و «شما نور جهان هستید.» مؤمنان نباید نور خود را پنهان کنند بلکه باید بدرخشند تا مردم پدر آسمانی را جلال دهند.</p>
+  </div>
+
+  <p>سپس عیسی قانون موسی را عمق می‌بخشد: «شنیده‌اید که گفته شده... اما من به شما می‌گویم...» او درباره خشم، شهوت، طلاق، سوگند، انتقام و دشمنان سخن گفت.</p>
+
+  <div class="verse-block">
+    «اما من به شما می‌گویم: دشمنان خود را دوست بدارید و برای آزاردهندگانتان دعا کنید.»
+    <div class="verse-ref">متی ۵:۴۴</div>
+  </div>
+
+  <p>فصل ششم درباره صدقه، دعا و روزه است — اما با پنهانکاری، نه برای نمایش. سپس عیسی دعای ربّانی را تعلیم داد:</p>
+
+  <div class="verse-block">
+    «پدر ما که در آسمانی، نام تو مقدس باد. ملکوت تو بیاید. اراده تو چنانکه در آسمان است، در زمین نیز اجرا شود...»
+    <div class="verse-ref">متی ۶:۹–۱۰</div>
+  </div>
+
+  <p>درباره ثروت: «گنج‌های خود را در آسمان ذخیره کنید.» درباره نگرانی: «به فردا نگران نباشید.» به پرندگان و لاله‌های صحرا نگاه کنید — پدر آسمانی شما از همه نیازهایتان آگاه است.</p>
+
+  <p>موعظه با اخطار جدی پایان می‌یابد: دو راه، دو درخت، دو بنا. خانه روی صخره در برابر طوفان می‌ایستد؛ خانه روی ماسه فرو می‌ریزد.</p>
+
+  <div class="memory-verse">
+    <div class="mv-label">آیه حفظ‌کردنی</div>
+    <div class="mv-text">«اول ملکوت خدا و عدالت او را جستجو کنید و تمام این‌ها نیز به شما داده خواهد شد.»</div>
+    <div class="mv-ref">متی ۶:۳۳</div>
+  </div>
+
+  <div class="reflection-card">
+    <h4>🤔 تأمل و اندیشه</h4>
+    <p>موعظه بر فراز کوه نشان می‌دهد که خدا قلب را می‌بیند، نه فقط اعمال ظاهری. کدام یک از «خوشا به حال‌ها» بیشتر دلت را لمس کرد؟ چرا؟</p>
+  </div>
+
+  <div class="nav-btns">
+    <button class="done-btn" onclick="markDone(this, 3)">✓ درس را تکمیل کردم</button>
+    <button class="nav-btn" onclick="scrollToLesson(2)">→ درس قبل</button>
+    <button class="nav-btn primary" onclick="scrollToLesson(4)">درس بعدی ←</button>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ═══════════════════════════════ LESSON 4 ═══════════════════════════════ -->
+<section class="section" id="lesson4" data-lesson="4" data-title="معجزات و تمثیل‌ها" data-time="۱۰ دقیقه">
+  <div class="lesson-num"><span>✨</span> درس چهارم</div>
+  <div class="lesson-timer">⏱ زمان تقریبی: <span>۱۰ دقیقه</span></div>
+  <h2>معجزات قدرتمند و تمثیل‌های حکیمانه</h2>
+
+  <div class="chapter-banner">
+    <div class="ch-icon">🌊</div>
+    <h3>فصل‌های ۸–۱۳</h3>
+    <p>ملکوت خدا در عمل</p>
+  </div>
+
+  <div class="verse-block">
+    «پس بازو دراز کرده، او را لمس نمود و گفت: می‌خواهم، پاک شو! و بلافاصله برصش پاک شد.»
+    <div class="verse-ref">متی ۸:۳</div>
+  </div>
+
+  <p>پس از موعظه، عیسی معجزات را آغاز کرد — اثبات اینکه کلامش قدرت دارد. شفای ابرصی، شفای غلام افسر رومی (که ایمانش عیسی را شگفت‌زده کرد)، شفای مادرزن پطرس، و آرام کردن طوفان دریا.</p>
+
+  <ul class="point-list">
+    <li><div class="dot"></div><div>🏥 شفای جسمانی بیماران و دیوانگان</div></li>
+    <li><div class="dot"></div><div>🌊 آرام کردن طوفان — قدرت بر طبیعت</div></li>
+    <li><div class="dot"></div><div>👁️ بازگرداندن بینایی به کوران</div></li>
+    <li><div class="dot"></div><div>🍞 سیر کردن ۵۰۰۰ نفر با پنج نان و دو ماهی</div></li>
+    <li><div class="dot"></div><div>🚶 راه رفتن روی آب</div></li>
+  </ul>
+
+  <div class="highlight-box">
+    <div class="hb-icon">🌱</div>
+    <h4>تمثیل‌های ملکوت (فصل ۱۳)</h4>
+    <p>عیسی با تمثیل‌هایی ملکوت آسمان را توضیح داد: دانه کاشته‌شده، تخم خردل، خمیرمایه، گنج پنهان، مروارید گرانبها، و تور ماهیگیری. هر تمثیل جنبه‌ای از ملکوت خدا را آشکار می‌کند.</p>
+  </div>
+
+  <div class="verse-block">
+    «ملکوت آسمان به دانه خردلی ماند که مردی برگرفت و در مزرعه‌اش کاشت؛ و آن کوچک‌ترین دانه‌هاست، اما چون بروید، بزرگ‌ترین گیاهان می‌شود.»
+    <div class="verse-ref">متی ۱۳:۳۱–۳۲</div>
+  </div>
+
+  <p>در این بخش، اعتراض فریسیان آغاز می‌شود. آنها معجزات عیسی را انکار نمی‌کردند اما با قدرت او مخالفت کردند. عیسی در پاسخ گفت: «بیایید نزد من، ای همه زحمتکشان و گران‌بار، و من شما را آرامش خواهم داد.»</p>
+
+  <div class="memory-verse">
+    <div class="mv-label">آیه حفظ‌کردنی</div>
+    <div class="mv-text">«بیایید نزد من، ای همه زحمتکشان و گران‌بار، و من شما را آرامش خواهم داد.»</div>
+    <div class="mv-ref">متی ۱۱:۲۸</div>
+  </div>
+
+  <div class="reflection-card">
+    <h4>🤔 تأمل و اندیشه</h4>
+    <p>معجزات عیسی نشان می‌دهد که او بر بیماری، طبیعت، و مرگ قدرت دارد. کدام معجزه برایت بیشتر الهام‌بخش است؟ آیا امروز به آرامشی که عیسی وعده داده نیاز داری؟</p>
+  </div>
+
+  <div class="nav-btns">
+    <button class="done-btn" onclick="markDone(this, 4)">✓ درس را تکمیل کردم</button>
+    <button class="nav-btn" onclick="scrollToLesson(3)">→ درس قبل</button>
+    <button class="nav-btn primary" onclick="scrollToLesson(5)">درس بعدی ←</button>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ═══════════════════════════════ LESSON 5 ═══════════════════════════════ -->
+<section class="section" id="lesson5" data-lesson="5" data-title="هفته آخر و مصلوب شدن" data-time="۸ دقیقه">
+  <div class="lesson-num"><span>🕊️</span> درس پنجم</div>
+  <div class="lesson-timer">⏱ زمان تقریبی: <span>۸ دقیقه</span></div>
+  <h2>ورود به اورشلیم و هفته آخر</h2>
+
+  <div class="chapter-banner">
+    <div class="ch-icon">🏛️</div>
+    <h3>فصل‌های ۲۱–۲۷</h3>
+    <p>مصلوب شدن — قلب تاریخ نجات</p>
+  </div>
+
+  <div class="verse-block">
+    «هوشیعانا بر پسر داود! مبارک باد آن که به نام خداوند می‌آید! هوشیعانا در عالم اعلی!»
+    <div class="verse-ref">متی ۲۱:۹</div>
+  </div>
+
+  <p>عیسی با جلال وارد اورشلیم شد. مردم شاخه‌های نخل پهن کردند. این تحقق نبوت زکریا بود: «ببین، پادشاهت به سوی تو می‌آید، حلیم و سوار بر الاغ.»</p>
+
+  <p>در معبد، عیسی میزهای صرافان را واژگون کرد: «خانه من خانه دعا نامیده خواهد شد، اما شما آن را غار دزدان کرده‌اید!» سپس مقابل سردمداران دینی ایستاد و آنها را به باد انتقاد گرفت.</p>
+
+  <div class="highlight-box">
+    <div class="hb-icon">🍷</div>
+    <h4>شب آخر — عشای ربّانی</h4>
+    <p>عیسی با دوازده شاگرد آخرین شام را خورد. نان را شکست: «این است جسد من.» جام را گرفت: «این است خون من از عهد جدید که برای بسیاری ریخته می‌شود.» یهودای اسخریوطی او را لو داد.</p>
+  </div>
+
+  <p>در باغ جتسیمانی عیسی دعا کرد: «ای پدر، اگر ممکن است این جام از من بگذرد، اما نه آنچه من می‌خواهم بلکه آنچه تو می‌خواهی.» سپس دستگیر شد، محاکمه شد، و در پیلاطس حکم اعدامش صادر شد.</p>
+
+  <div class="verse-block">
+    «اما عیسی با صدای بلند فریاد زد و جان داد. و ناگاه پرده معبد از بالا تا پایین دو نیم شد.»
+    <div class="verse-ref">متی ۲۷:۵۰–۵۱</div>
+  </div>
+
+  <p>پرده معبد که پرده‌ای بود که انسان را از قدس‌الاقداس جدا می‌کرد، دو نیم شد. این نماد دسترسی مستقیم انسان به خداست. دیگر واسطه‌ای لازم نیست — راه باز شد.</p>
+
+  <ul class="point-list">
+    <li><div class="dot"></div><div>مرگ عیسی برای گناهان همه بشریت بود</div></li>
+    <li><div class="dot"></div><div>پرده دو نیم شده یعنی دسترسی آزاد به خدا</div></li>
+    <li><div class="dot"></div><div>سرباز رومی گفت: «براستی این پسر خدا بود!»</div></li>
+  </ul>
+
+  <div class="memory-verse">
+    <div class="mv-label">آیه حفظ‌کردنی</div>
+    <div class="mv-text">«زیرا پسر انسان نیامد تا خدمت بگیرد بلکه تا خدمت کند و جان خود را فدیه بسیاری کند.»</div>
+    <div class="mv-ref">متی ۲۰:۲۸</div>
+  </div>
+
+  <div class="reflection-card">
+    <h4>🤔 تأمل و اندیشه</h4>
+    <p>عیسی می‌توانست از مرگ فرار کند، اما نکرد. او از روی محبت جان داد. این محبتی است که انسان را متحول می‌کند. آیا این محبت را در قلبت پذیرفته‌ای؟</p>
+  </div>
+
+  <div class="nav-btns">
+    <button class="done-btn" onclick="markDone(this, 5)">✓ درس را تکمیل کردم</button>
+    <button class="nav-btn" onclick="scrollToLesson(4)">→ درس قبل</button>
+    <button class="nav-btn primary" onclick="scrollToLesson(6)">درس بعدی ←</button>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ═══════════════════════════════ LESSON 6 ═══════════════════════════════ -->
+<section class="section" id="lesson6" data-lesson="6" data-title="رستاخیز و مأموریت بزرگ" data-time="۷ دقیقه">
+  <div class="lesson-num"><span>🌅</span> درس ششم</div>
+  <div class="lesson-timer">⏱ زمان تقریبی: <span>۷ دقیقه</span></div>
+  <h2>رستاخیز — پیروزی نهایی</h2>
+
+  <div class="chapter-banner">
+    <div class="ch-icon">🌅</div>
+    <h3>فصل ۲۸</h3>
+    <p>مرگ مغلوب شد — امید ابدی آغاز شد</p>
+  </div>
+
+  <div class="verse-block">
+    «او اینجا نیست زیرا چنانکه گفت برخاسته است! بیایید جایی که در آن خوابیده بود را ببینید.»
+    <div class="verse-ref">متی ۲۸:۶</div>
+  </div>
+
+  <p>سپیده‌دم روز اول هفته، مریم مجدلیه و مریم دیگر به قبر آمدند. زمین لرزید، فرشته‌ای سنگ را غلطاند و نشست. نگهبانان از ترس بیهوش شدند.</p>
+
+  <p>فرشته گفت: «او اینجا نیست — برخاسته است!» این کلمات تاریخ را تغییر داد. رستاخیز عیسی نه یک افسانه بلکه واقعیتی است که شاگردان جانشان را برایش دادند.</p>
+
+  <div class="highlight-box">
+    <div class="hb-icon">🌍</div>
+    <h4>مأموریت بزرگ — فرمان نهایی</h4>
+    <p>عیسی برخاسته بر کوهی در جلیل به شاگردان ظاهر شد. آنها سجده کردند. عیسی فرمود: «تمام اقتدار در آسمان و بر زمین به من داده شده است. پس بروید و تمام ملت‌ها را شاگرد سازید...»</p>
+  </div>
+
+  <div class="verse-block">
+    «بروید و همه قوم‌ها را شاگرد من سازید و آنها را به نام پدر و پسر و روح‌القدس تعمید دهید و یاد دهید که همه آنچه به شما امر کرده‌ام را نگاه دارند. و اینک من تا پایان عالم همواره با شما هستم.»
+    <div class="verse-ref">متی ۲۸:۱۹–۲۰</div>
+  </div>
+
+  <p>انجیل متی با وعده‌ای پایان می‌یابد که در ابتدا داده شده بود: «عمانوئیل — خدا با ماست.» از تولد تا رستاخیز، از اورشلیم تا انتهای زمین، عیسی همواره حاضر است.</p>
+
+  <ul class="point-list">
+    <li><div class="dot"></div><div>رستاخیز اثبات قدرت مطلق عیسی بر مرگ است</div></li>
+    <li><div class="dot"></div><div>مأموریت بزرگ برای همه مؤمنان در همه اعصار است</div></li>
+    <li><div class="dot"></div><div>وعده حضور همیشگی عیسی تسلای قلب است</div></li>
+  </ul>
+
+  <div class="memory-verse">
+    <div class="mv-label">آیه حفظ‌کردنی</div>
+    <div class="mv-text">«و اینک من تا پایان عالم همواره با شما هستم.»</div>
+    <div class="mv-ref">متی ۲۸:۲۰</div>
+  </div>
+
+  <div class="reflection-card">
+    <h4>🤔 تأمل و اندیشه</h4>
+    <p>انجیل متی با «خدا با ماست» شروع می‌شود و با «من همواره با شما هستم» تمام می‌شود. این حضور ابدی یعنی ما هرگز تنها نیستیم. این وعده امروز چه معنایی برای زندگی تو دارد؟</p>
+  </div>
+
+  <div class="nav-btns">
+    <button class="done-btn" onclick="markDone(this, 6)">✓ درس را تکمیل کردم</button>
+    <button class="nav-btn" onclick="scrollToLesson(5)">→ درس قبل</button>
+    <button class="nav-btn primary" onclick="scrollToFinal()">پایان دوره 🎉</button>
+  </div>
+</section>
+
+<!-- FINAL PAGE -->
+<section id="final">
+  <div class="trophy">&#x1F3C6;</div>
+  <h2>&#x062A;&#x0628;&#x0631;&#x06CC;&#x06A9;!<br>&#x062F;&#x0648;&#x0631;&#x0647; &#x0631;&#x0627; &#x062A;&#x06A9;&#x0645;&#x06CC;&#x0644; &#x06A9;&#x0631;&#x062F;&#x06CC;</h2>
+  <p style="color:var(--text-dim);margin:16px auto 30px;max-width:340px;">&#x062A;&#x0648; &#x06CC;&#x06A9; &#x0633;&#x0627;&#x0639;&#x062A; &#x0628;&#x0627; &#x06A9;&#x0644;&#x0627;&#x0645; &#x062E;&#x062F;&#x0627; &#x062F;&#x0631; &#x0627;&#x0646;&#x062C;&#x06CC;&#x0644; &#x0645;&#x062A;&#x06CC; &#x06AF;&#x0630;&#x0631;&#x0627;&#x0646;&#x062F;&#x06CC;. &#x0627;&#x06CC;&#x0646; &#x0622;&#x063A;&#x0627;&#x0632; &#x06CC;&#x06A9; &#x0633;&#x0641;&#x0631; &#x0628;&#x06CC;&#x200C;&#x067E;&#x0627;&#x06CC;&#x0627;&#x0646; &#x0628;&#x0627; &#x062E;&#x062F;&#x0627;&#x0633;&#x062A;.</p>
+
+  <!-- Lion & Sun Persian Flag SVG -->
+  <div style="margin:10px auto 28px;width:min(300px,82vw);">
+    <svg viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg" style="width:100%;border-radius:14px;box-shadow:0 8px 40px rgba(201,168,76,0.4);">
+      <rect width="900" height="200" y="0" fill="#239f40"/>
+      <rect width="900" height="200" y="200" fill="#f5f5f0"/>
+      <rect width="900" height="200" y="400" fill="#c8001e"/>
+      <!-- Sun -->
+      <g transform="translate(450,300)">
+        <g stroke="#e8b800" stroke-width="8" opacity="0.9">
+          <line x1="0" y1="-95" x2="0" y2="-138"/>
+          <line x1="0" y1="-95" x2="0" y2="-138" transform="rotate(15)"/>
+          <line x1="0" y1="-95" x2="0" y2="-138" transform="rotate(30)"/>
+          <line x1="0" y1="-95" x2="0" y2="-138" transform="rotate(45)"/>
+          <line x1="0" y1="-95" x2="0" y2="-138" transform="rotate(60)"/>
+          <line x1="0" y1="-95" x2="0" y2="-138" transform="rotate(75)"/>
+          <line x1="0" y1="-95" x2="0" y2="-138" transform="rotate(90)"/>
+          <line x1="0" y1="-95" x2="0" y2="-138" transform="rotate(105)"/>
+          <line x1="0" y1="-95" x2="0" y2="-138" transform="rotate(120)"/>
+          <line x1="0" y1="-95" x2="0" y2="-138" transform="rotate(135)"/>
+          <line x1="0" y1="-95" x2="0" y2="-138" transform="rotate(150)"/>
+          <line x1="0" y1="-95" x2="0" y2="-138" transform="rotate(165)"/>
+          <line x1="0" y1="-95" x2="0" y2="-138" transform="rotate(180)"/>
+          <line x1="0" y1="-95" x2="0" y2="-138" transform="rotate(195)"/>
+          <line x1="0" y1="-95" x2="0" y2="-138" transform="rotate(210)"/>
+          <line x1="0" y1="-95" x2="0" y2="-138" transform="rotate(225)"/>
+          <line x1="0" y1="-95" x2="0" y2="-138" transform="rotate(240)"/>
+          <line x1="0" y1="-95" x2="0" y2="-138" transform="rotate(255)"/>
+          <line x1="0" y1="-95" x2="0" y2="-138" transform="rotate(270)"/>
+          <line x1="0" y1="-95" x2="0" y2="-138" transform="rotate(285)"/>
+          <line x1="0" y1="-95" x2="0" y2="-138" transform="rotate(300)"/>
+          <line x1="0" y1="-95" x2="0" y2="-138" transform="rotate(315)"/>
+          <line x1="0" y1="-95" x2="0" y2="-138" transform="rotate(330)"/>
+          <line x1="0" y1="-95" x2="0" y2="-138" transform="rotate(345)"/>
+        </g>
+        <circle r="78" fill="#f5c000"/>
+        <!-- Lion walking right -->
+        <g transform="translate(-55,-28)">
+          <!-- tail up and curled -->
+          <path d="M102,10 C125,-15 120,-50 105,-58 C118,-62 128,-45 120,-25 C130,0 108,22 102,10Z" fill="#c07800"/>
+          <!-- tail tip -->
+          <circle cx="105" cy="-60" r="8" fill="#c07800"/>
+          <!-- body -->
+          <ellipse cx="48" cy="26" rx="54" ry="28" fill="#d48a00"/>
+          <!-- neck -->
+          <ellipse cx="-6" cy="10" rx="20" ry="24" fill="#d48a00"/>
+          <!-- mane ring -->
+          <circle cx="-12" cy="2" r="32" fill="none" stroke="#a06200" stroke-width="12" stroke-dasharray="8,5" opacity="0.8"/>
+          <!-- head -->
+          <circle cx="-12" cy="2" r="24" fill="#e09500"/>
+          <!-- snout -->
+          <ellipse cx="4" cy="10" rx="13" ry="9" fill="#e8aa20"/>
+          <!-- eye -->
+          <circle cx="-18" cy="-4" r="4" fill="#1a1a00"/>
+          <circle cx="-17" cy="-5" r="1.5" fill="white"/>
+          <!-- nostril -->
+          <circle cx="8" cy="9" r="2.5" fill="#a05000"/>
+          <!-- mouth line -->
+          <path d="M2,14 Q7,19 13,14" fill="none" stroke="#804000" stroke-width="2" stroke-linecap="round"/>
+          <!-- front raised paw -->
+          <path d="M-8,50 Q-4,65 -10,72" stroke="#c07800" stroke-width="9" fill="none" stroke-linecap="round"/>
+          <ellipse cx="-10" cy="74" rx="7" ry="4" fill="#c07800"/>
+          <!-- front back leg -->
+          <path d="M12,50 Q14,66 10,74" stroke="#c07800" stroke-width="9" fill="none" stroke-linecap="round"/>
+          <ellipse cx="10" cy="76" rx="7" ry="4" fill="#c07800"/>
+          <!-- rear legs -->
+          <path d="M68,48 Q72,62 68,72" stroke="#c07800" stroke-width="9" fill="none" stroke-linecap="round"/>
+          <ellipse cx="68" cy="74" rx="7" ry="4" fill="#c07800"/>
+          <path d="M84,46 Q90,60 86,70" stroke="#c07800" stroke-width="9" fill="none" stroke-linecap="round"/>
+          <ellipse cx="86" cy="72" rx="7" ry="4" fill="#c07800"/>
+          <!-- sword held in paw -->
+          <line x1="-46" y1="34" x2="6" y2="34" stroke="#b0b0b0" stroke-width="5" stroke-linecap="round"/>
+          <line x1="-4" y1="28" x2="-4" y2="42" stroke="#c0c0c0" stroke-width="4" stroke-linecap="round"/>
+          <!-- crown hint on top -->
+          <path d="M-28,-22 L-22,-32 L-16,-22 L-10,-32 L-4,-22" fill="none" stroke="#f5c000" stroke-width="3" stroke-linejoin="round"/>
+        </g>
+      </g>
+    </svg>
+    <p style="text-align:center;font-size:12px;color:var(--text-dim);margin-top:8px;">&#x067E;&#x0631;&#x0686;&#x0645; &#x0634;&#x06CC;&#x0631; &#x0648; &#x062E;&#x0648;&#x0631;&#x0634;&#x06CC;&#x062F; &#x0627;&#x06CC;&#x0631;&#x0627;&#x0646;</p>
+  </div>
+
+  <div class="verse-block" style="text-align:center;margin:20px auto;max-width:400px;">
+    &#xAB;&#x06A9;&#x0644;&#x0627;&#x0645; &#x062E;&#x062F;&#x0627; &#x0632;&#x0646;&#x062F;&#x0647; &#x0648; &#x0645;&#x0624;&#x062B;&#x0631; &#x0627;&#x0633;&#x062A;.&#xBB;
+    <div class="verse-ref">&#x0639;&#x0628;&#x0631;&#x0627;&#x0646;&#x06CC;&#x0627;&#x0646; &#x06F4;:&#x06F1;&#x06F2;</div>
+  </div>
+
+  <p style="color:var(--text-dim);font-size:13px;text-align:center;max-width:320px;margin:0 auto 28px;">&#x0627;&#x06CC;&#x0646; &#x062F;&#x0648;&#x0631;&#x0647; &#x0631;&#x0627; &#x0628;&#x0627; &#x062E;&#x0627;&#x0646;&#x0648;&#x0627;&#x062F;&#x0647; &#x0648; &#x062F;&#x0648;&#x0633;&#x062A;&#x0627;&#x0646; &#x0628;&#x0647; &#x0627;&#x0634;&#x062A;&#x0631;&#x0627;&#x06A9; &#x0628;&#x06AF;&#x0630;&#x0627;&#x0631; &#x1F64F;</p>
+
+  <!-- Simple maker credit -->
+  <div style="text-align:center;padding:22px 20px;border-top:1px solid var(--border);margin-top:4px;">
+    <div style="font-size:22px;margin-bottom:10px;">&#x2728;</div>
+    <p style="color:var(--gold);font-size:16px;font-weight:700;margin-bottom:6px;">&#x0633;&#x0627;&#x062E;&#x062A;&#x0647; &#x0634;&#x062F;&#x0647; &#x062A;&#x0648;&#x0633;&#x0637; &#x062F;&#x0627;&#x0631;&#x06CC;&#x0648;&#x0634; &#x06CC;&#x0648;&#x062E;&#x0627;&#x0646;&#x0647;</p>
+    <p style="color:var(--text-dim);font-size:14px;">&#x0628;&#x0631;&#x0627;&#x06CC; &#x062C;&#x0627;&#x0645;&#x0639;&#x0647; &#x0627;&#x06CC;&#x0631;&#x0627;&#x0646;&#x06CC;&#x0627;&#x0646; &#x1F54A;&#xFE0F;</p>
+  </div>
+
+  <div style="margin-top:24px;padding-bottom:20px;">
+    <button class="nav-btn primary" onclick="window.scrollTo({top:0,behavior:'smooth'})">&#x2191; &#x0628;&#x0627;&#x0632;&#x06AF;&#x0634;&#x062A; &#x0628;&#x0647; &#x0627;&#x0628;&#x062A;&#x062F;&#x0627;</button>
+  </div>
+</section>
+
+<!-- MUSIC PLAYER -->
+<div id="music-bar">
+  <div class="note">🎵</div>
+  <div class="label">
+    موسیقی آرامش‌بخش
+    <small>برای تمرکز بهتر</small>
+  </div>
+  <div class="wave-vis" id="wave">
+    <span></span><span></span><span></span><span></span><span></span>
+  </div>
+  <button id="play-btn" onclick="toggleMusic()">▶</button>
+</div>
+
+<!-- AUDIO using Web Audio API for ambient music -->
+<script>
+// ── Stars ──
+const starsEl = document.getElementById('stars');
+for(let i=0;i<60;i++){
+  const s = document.createElement('div');
+  s.className = 'star';
+  s.style.cssText = `
+    left:${Math.random()*100}%;
+    top:${Math.random()*100}%;
+    --d:${2+Math.random()*4}s;
+    --op:${0.4+Math.random()*0.6};
+    animation-delay:${Math.random()*5}s;
+  `;
+  starsEl.appendChild(s);
+}
+
+// ── Audio ──
+let audioCtx = null, playing = false;
+let nodes = [];
+
+function buildMusic() {
+  if (audioCtx) return;
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  const master = audioCtx.createGain();
+  master.gain.value = 0.18;
+  master.connect(audioCtx.destination);
+
+  // Reverb
+  function makeReverb(dur){
+    const len = audioCtx.sampleRate * dur;
+    const buf = audioCtx.createBuffer(2, len, audioCtx.sampleRate);
+    for(let c=0;c<2;c++){
+      const d = buf.getChannelData(c);
+      for(let i=0;i<len;i++) d[i]=(Math.random()*2-1)*Math.pow(1-i/len,2);
+    }
+    const conv = audioCtx.createConvolver();
+    conv.buffer = buf;
+    return conv;
+  }
+  const reverb = makeReverb(3.5);
+  reverb.connect(master);
+
+  const gainR = audioCtx.createGain();
+  gainR.gain.value = 0.55;
+  gainR.connect(reverb);
+  gainR.connect(master);
+
+  // Pad notes — peaceful church-like harmony
+  const padFreqs = [130.81, 164.81, 196.00, 261.63, 329.63];
+  padFreqs.forEach((freq, i) => {
+    const osc = audioCtx.createOscillator();
+    osc.type = 'sine';
+    osc.frequency.value = freq;
+    const g = audioCtx.createGain();
+    g.gain.value = 0.07 - i * 0.008;
+    osc.connect(g); g.connect(gainR);
+    osc.start();
+    nodes.push(osc);
+    // Gentle slow vibrato
+    const lfo = audioCtx.createOscillator();
+    lfo.frequency.value = 0.3 + i * 0.05;
+    const lfoG = audioCtx.createGain();
+    lfoG.gain.value = 0.3;
+    lfo.connect(lfoG); lfoG.connect(osc.frequency);
+    lfo.start(); nodes.push(lfo);
+  });
+
+  // Gentle harp-like plucks using oscillator bursts
+  function pluck(freq, t){
+    const osc = audioCtx.createOscillator();
+    osc.type = 'triangle';
+    osc.frequency.value = freq;
+    const g = audioCtx.createGain();
+    g.gain.setValueAtTime(0.12, t);
+    g.gain.exponentialRampToValueAtTime(0.001, t + 1.8);
+    osc.connect(g); g.connect(gainR);
+    osc.start(t); osc.stop(t + 2);
+  }
+
+  const melody = [261.63, 293.66, 329.63, 349.23, 392.00, 440.00, 392.00, 349.23, 329.63, 293.66];
+  let t = audioCtx.currentTime + 0.5;
+  function scheduleLoop(){
+    melody.forEach((f, i) => {
+      pluck(f, t + i * 1.4);
+      pluck(f * 0.5, t + i * 1.4 + 0.7);
+    });
+    t += melody.length * 1.4;
+    setTimeout(scheduleLoop, (melody.length * 1.4 - 2) * 1000);
+  }
+  scheduleLoop();
+}
+
+function toggleMusic(){
+  if(!playing){
+    buildMusic();
+    if(audioCtx.state === 'suspended') audioCtx.resume();
+    playing = true;
+    document.getElementById('play-btn').textContent = '⏸';
+    document.getElementById('wave').classList.add('playing');
+  } else {
+    if(audioCtx) audioCtx.suspend();
+    playing = false;
+    document.getElementById('play-btn').textContent = '▶';
+    document.getElementById('wave').classList.remove('playing');
+  }
+}
+
+// ── Scroll progress ──
+window.addEventListener('scroll', () => {
+  const total = document.body.scrollHeight - window.innerHeight;
+  const pct = (window.scrollY / total) * 100;
+  document.getElementById('progress-bar').style.width = pct + '%';
+});
+
+// ── Intersection observer for section reveal ──
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.12 });
+document.querySelectorAll('.section').forEach(s => observer.observe(s));
+
+// ── Sidebar ──
+const lessons = [];
+document.querySelectorAll('.section[data-lesson]').forEach(s => {
+  lessons.push({ id: s.id, num: s.dataset.lesson, title: s.dataset.title, time: s.dataset.time });
+});
+
+function buildSidebar(){
+  const list = document.getElementById('lesson-list');
+  lessons.forEach(l => {
+    const d = document.createElement('div');
+    d.className = 'sidebar-item'; d.id = 'si-' + l.num;
+    d.onclick = () => { scrollToLesson(l.num); closeSidebar(); };
+    d.innerHTML = `
+      <div class="s-num">${l.num}</div>
+      <div>
+        <div class="s-title">${l.title}</div>
+        <div class="s-time">${l.time}</div>
+      </div>`;
+    list.appendChild(d);
+  });
+}
+buildSidebar();
+
+function openSidebar(){
+  document.getElementById('sidebar').classList.add('open');
+  document.getElementById('sidebar-overlay').classList.add('open');
+}
+function closeSidebar(){
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebar-overlay').classList.remove('open');
+}
+
+function scrollToLesson(n){
+  const el = document.getElementById('lesson' + n);
+  if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
+}
+function scrollToFinal(){
+  document.getElementById('final').scrollIntoView({behavior:'smooth'});
+}
+
+// ── Done buttons ──
+const done = {};
+function markDone(btn, n){
+  if(!done[n]){
+    done[n] = true;
+    btn.classList.add('completed');
+    btn.textContent = '✓ تکمیل شد!';
+    const si = document.getElementById('si-' + n);
+    if(si) si.classList.add('done');
+  }
+}
+</script>
+</body>
+</html>
